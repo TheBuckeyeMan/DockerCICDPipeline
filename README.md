@@ -180,3 +180,46 @@ Create a new directory in the root of your project
    |-ci.yml
 
 3. Add in the following code for the CI pipeline 
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: #Add additional branches if we neeed to add additional branches
+      - main 
+      - dev
+      - test
+      - feature/dockerimagecreation
+      - feature/cd
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t thebuckeyeman20/cicd:image1 .
+
+      - name: Push Docker images
+        run: |
+          docker push thebuckeyeman20/cicd:image1
+
+
+If you want to add additional configuration to kick off builds of additional images specify them in the  - name: Build Docker image and     - name: Push Docker images sections
+
+TROUBLESHOOTING CI:
+ensure the branch you are commiting code to is listed in the list of branches at the top of ci.yml
+
+Check your github repo actions tab for logs on the run and build to see if anything failed and get error details.
