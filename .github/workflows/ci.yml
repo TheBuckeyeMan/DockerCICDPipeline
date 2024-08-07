@@ -28,9 +28,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t thebuckeyeman20/cicd:image1 .
-          docker build -t thebuckeyeman20/springbootimages:example .
 
       - name: Push Docker images
         run: |
           docker push thebuckeyeman20/cicd:image1
-          docker push thebuckeyeman20/springbootimages:example

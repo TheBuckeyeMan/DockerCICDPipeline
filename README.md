@@ -146,4 +146,37 @@ docker-compose up
 
 
 
-lets see
+SETTING UP THE CICD PIPELINE
+
+Prerequasites:
+1. Create the docker-compose.yml file 
+version: '3.8'
+
+services:
+  container1:
+    image: thebuckeyeman20/cicd:image1
+    container_name: container1
+    ports:
+      - 8082:8082
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+#We need to add in all repos we want to make a build off every commit(Every time we make a commit, build what) this usually will refer to the current workspace so if we make a commit on this repo, build an image of this repo in dockerhub
+
+
+
+
+CI
+In order to set up the CI pipeline in dockerhub we first need to configure a few things. 
+1. In github, navigate to your repo -> settings -> Serets and variables -> Action -> New Repositorty Secret
+Add in the following Secrets
+DOCKER_PASSWORD
+DOCKER_USERNAME
+
+2. After you have your gitgub repo secrets set up, it is time to make the pipeline
+Create a new directory in the root of your project 
+.github
+|-workflows
+   |-ci.yml
+
+3. Add in the following code for the CI pipeline 
