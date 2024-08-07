@@ -3,10 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger the workflow on pushes to the main branch
+      - main  # Trigger the workflow on pushes to these branches
       - dev
       - test
-      - feature
       - feature/dockerimagecreation
 
 jobs:
