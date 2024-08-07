@@ -2,15 +2,16 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main  # Trigger the workflow on pushes to these branches
+    branches: #Add additional branches if we neeed to add additional branches
+      - main 
       - dev
       - test
       - feature/dockerimagecreation
+      - feature/cd
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu image
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout code
@@ -28,9 +29,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t thebuckeyeman20/cicd:image1 .
-          docker build -t thebuckeyeman20/springbootimages:example .
 
       - name: Push Docker images
         run: |
           docker push thebuckeyeman20/cicd:image1
-          docker push thebuckeyeman20/springbootimages:example
