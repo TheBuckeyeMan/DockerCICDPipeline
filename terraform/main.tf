@@ -1,7 +1,7 @@
-resource "aws_s3_bucket" "adams_test_bucket" {
-  bucket = "adams_test_bucket_for_cicd_unique_name_76492615"  # Replace with a unique bucket name
+resource "aws_s3_bucket" "adams-test-bucket" {
+  bucket = "adams-test-bucket-for-cicd-unique-name-76492615"  # Replace with a unique bucket name
   tags = {
-    Name        = "adams_test_bucket"
+    Name        = "adams-test-bucket"
     Environment = "dev"
   }
 }
