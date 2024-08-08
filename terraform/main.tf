@@ -5,6 +5,9 @@ resource "aws_s3_bucket" "adams-test-bucket" {
     Name        = "adams-test-bucket"
     Environment = "dev"
   }
+  versioning {
+    enabled = true
+  }
 }
 
 
