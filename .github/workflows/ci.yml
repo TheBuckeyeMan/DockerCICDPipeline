@@ -10,7 +10,7 @@ on:
       - feature/cd
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest 
 
     steps:
@@ -33,3 +33,27 @@ jobs:
       - name: Push Docker images
         run: |
           docker push thebuckeyeman20/cicd:image1
+#Teraform code for the deployment - this is what kicks off the deployment of aws resources
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform/.terraform #Adjust if we have our terraform .terraform file in a different directory
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: terraform/.terraform #Adjust if we have our terraform .terraform file in a different directory
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform/.terraform  # Adjust if your Terraform configuration is in a different directory
+        env:
+        #  TF_VAR_some_variable: ${{ secrets.SOME_SECRET }} 
+
+
+
+# CD Portion of the cicd process
+
