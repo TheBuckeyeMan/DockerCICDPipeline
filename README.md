@@ -145,9 +145,9 @@ docker-compose up
 
 
 
-
+-----------------------------------------------------------------
 SETTING UP THE CICD PIPELINE
-
+-----------------------------------------------------------------
 Prerequasites:
 1. Create the docker-compose.yml file 
 version: '3.8'
@@ -163,15 +163,13 @@ services:
 
 #We need to add in all repos we want to make a build off every commit(Every time we make a commit, build what) this usually will refer to the current workspace so if we make a commit on this repo, build an image of this repo in dockerhub
 
-
-
-
-CI
+-----------------------------------------------------------------
+# CI: Docker image creation - push to docker hub
 In order to set up the CI pipeline in dockerhub we first need to configure a few things. 
 1. In github, navigate to your repo -> settings -> Serets and variables -> Action -> New Repositorty Secret
 Add in the following Secrets
-DOCKER_PASSWORD
-DOCKER_USERNAME
+DOCKER_PASSWORD <your docker hub username(not email)>
+DOCKER_USERNAME <your docker hub password>
 
 2. After you have your gitgub repo secrets set up, it is time to make the pipeline
 Create a new directory in the root of your project 
@@ -180,3 +178,132 @@ Create a new directory in the root of your project
    |-ci.yml
 
 3. Add in the following code for the CI pipeline 
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: #Add additional branches if we neeed to add additional branches
+      - main 
+      - dev
+      - test
+      - feature/dockerimagecreation
+      - feature/cd
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t thebuckeyeman20/cicd:image1 .
+
+      - name: Push Docker images
+        run: |
+          docker push thebuckeyeman20/cicd:image1
+
+
+Adjustments:
+1. If you want to add additional configuration to kick off builds of additional images specify them in the  - name: Build Docker image and - name: Push Docker images sections
+2. If you create a new branch and want the cicd process to be kicked off as part of the process, ensure that you add in additional configuration under *Branches* you will specify the name of your new branch
+3. You can specify a new repo and new tag for your build and push in the pipeline above under the sections Build Docker image and Push Docker image
+
+-----------------------------------------------------------------
+# Terraform Provisioning Via CICD
+
+With any cicd pipeline, if we want to deploy to the cloud, we will need to set up our terraform code to create the resource we need. In order to acomplish this, make sure to do the following
+
+1. In github, add srepo secret variable for AWS_ACCESS_KEY_ID <Add your aws_access_key> and AWS_SECRET_ACCESS_KEY <Add your secret access key>
+
+2. In your project, navigate to your terraform directory(This should be right under your main repo directory) add aws crednetials config
+    a. Add Enviroment variables to providers.tf - see below
+    provider "aws" {
+        region     = "us-east-2"
+        access_key  = var.aws_access_key
+        secret_key  = var.aws_secret_key
+        }
+    b. Add variables in variables.tf - see below
+        variable "aws_access_key" {
+        description = "AWS access key"
+        type        = string
+        }
+
+        variable "aws_secret_key" {
+        description = "AWS secret key"
+        type        = string
+        }   
+    c. After you do this your aws credential config IN TERRAFORM should be complete 
+3. Add in your Terraform CICD Code - See below 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
+
+      - name: Terraform Plan
+        run: terraform plan -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        working-directory: terraform # Adjust if your Terraform configuration is in a different directory
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+Adjustments
+1. Ensure your terraform_version: <latest terraform version> -> Check for latest if you are haviong issues with the cicd pipeline
+2. Ensure working-directory: <Directory from repo root directory of the terraform directory> - configure the correct directory
+3. Add in your environment variables for AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY after terraform plan and terraform apply -> -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+**If you do not add this, terraform will fail to authenticate with aws and will be unable to provision resources
+**After you have completed the above, you can modify your terrform code to provision any # of resources to your aws account as you would like.**
+**Your Terraform should now deploy to the aws cloud
+
+-----------------------------------------------------------------
+TROUBLESHOOTING CI:
+1. ensure the branch you are commiting code to is listed in the list of branches at the top of ci.yml
+
+2. Check your github repo actions tab for logs on the run and build to see if anything failed and get error details.
+
+3. Ensure the correct file structure
+Repository Directory
+    |-.github
+        |-workflows
+            |-ci.yml
+    |-terraform
+        |-.terraform
+        |-variables
+            |-local.tfvars
+            |-dev.tfvars
+        |-iam.tf
+        |-main.tf
+        |-outputs.tf
+        |-providers.tf
+        |-variables.tf
+
+-----------------------------------------------------------------
+CD: Continuous Deployment of Docker image to AWS - We will deploy to aws lambda in this example
+
+Prerequasites
+Create terraform code for the aws lambda
+
+
+
+
+
+
+
