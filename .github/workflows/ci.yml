@@ -41,7 +41,7 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: /Users/adammaas/Desktop/GitHub_Repositories/DockerCICDPipeline/terraform/.terraform #Adjust if we have our terraform .terraform file in a different directory
+        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
 
       - name: Terraform Plan
         run: terraform plan
