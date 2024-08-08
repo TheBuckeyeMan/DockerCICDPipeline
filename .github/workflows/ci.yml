@@ -50,7 +50,7 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform/.terraform  # Adjust if your Terraform configuration is in a different directory
-        env:
+       # env:
         #  TF_VAR_some_variable: ${{ secrets.SOME_SECRET }} 
 
 
