@@ -44,35 +44,21 @@ jobs:
         run: terraform init
         working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
         env:
-          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      # - name: Terraform Import S3 Bucket
-      #   run: |
-      #     terraform import \
-      #       -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
-      #       -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
-      #       aws_s3_bucket.adams-test-bucket adams-test-bucket-for-cicd-unique-name-76492615
-      #   working-directory: terraform
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
+          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Terraform Plan
         run: terraform plan -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
+          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform # Adjust if your Terraform configuration is in a different directory
-        # env:
-        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 
 
