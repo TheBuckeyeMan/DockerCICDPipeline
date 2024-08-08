@@ -34,16 +34,17 @@ jobs:
         run: |
           docker push thebuckeyeman20/cicd:image1
 #Teraform code for the deployment - this is what kicks off the deployment of aws resources
-      - name: List Terraform Workspaces
-        run: terraform workspace list
-        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
-        env:
-          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
       
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
+
+      - name: List Terraform Workspaces
+        run: terraform workspace list
+        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
+        env:
+          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
 
       - name: Terraform Init
         run: terraform init
