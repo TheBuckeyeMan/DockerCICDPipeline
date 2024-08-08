@@ -58,6 +58,8 @@ jobs:
 
 # CD Portion of the cicd process - take docker image and push to aws lambda
       - name: Trigger Spinnaker Pipeline
-        # run:
-        #   - 
+        run: 
+          - curl -X POST https://spinnaker-api-endpoint/trigger-pipeline \
+        env:
+          SPINNAKER_API_TOKEN: ${{ secrets.SPINNAKER_API_TOKEN }}
 
