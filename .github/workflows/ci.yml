@@ -45,11 +45,11 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan
-        working-directory: terraform/.terraform #Adjust if we have our terraform .terraform file in a different directory
+        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: terraform/.terraform  # Adjust if your Terraform configuration is in a different directory
+        working-directory: terraform # Adjust if your Terraform configuration is in a different directory
        # env:
         #  TF_VAR_some_variable: ${{ secrets.SOME_SECRET }} 
 
