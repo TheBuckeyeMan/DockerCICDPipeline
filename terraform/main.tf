@@ -18,7 +18,6 @@ resource "aws_s3_bucket_versioning" "adams-test-bucket" {
   }
 }
 
-
 # #Lambda reosurce
 # resource "aws_lambda_function" "my_lambda_function" {
 #   function_name = "my_lambda_function"
