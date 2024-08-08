@@ -5,11 +5,15 @@ resource "aws_s3_bucket" "adams-test-bucket" {
     Name        = "adams-test-bucket"
     Environment = "dev"
   }
-  versioning {
-    enabled = true
+}
+#Enables s3 bucket versioning so we can overrite the s3 bucket and not fail terraform apply 
+resource "aws_s3_bucket_versioning" "adams-test-bucket-versioning" {
+  bucket = aws_s3_bucket.adams-test-bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
   }
 }
-
 
 
 # #Lambda reosurce
