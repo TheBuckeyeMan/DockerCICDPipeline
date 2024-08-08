@@ -57,5 +57,7 @@ jobs:
         working-directory: terraform # Adjust if your Terraform configuration is in a different directory
 
 # CD Portion of the cicd process - take docker image and push to aws lambda
-
+      - name: Trigger Spinnaker Pipeline
+        # run:
+        #   - 
 
