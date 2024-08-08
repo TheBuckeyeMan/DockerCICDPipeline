@@ -1,4 +1,4 @@
-output "lambda_function_arn" {
-  description = "The ARN of the Lambda function"
-  value       = aws_lambda_function.my_lambda_function.arn
+output "bucket_name" {
+  value = aws_s3_bucket.my_bucket.bucket
+  description = "The name of the S3 bucket"
 }
