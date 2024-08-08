@@ -23,7 +23,7 @@ resource "aws_lambda_function" "adam-lambda-for-springbootapp" {
 
 #Lambda function for TF
 # Create an IAM role for the Lambda function
-resource "aws_iam_role" "lambda_role_cicd_cicd" {
+resource "aws_iam_role" "lambda_role_cicd" {
   name = "lambda_role_cicd"
 
   assume_role_policy = jsonencode({
