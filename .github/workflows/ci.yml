@@ -40,12 +40,6 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      - name: List Terraform Workspaces
-        run: terraform workspace list
-        working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory
-        env:
-          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
-
       - name: Terraform Init
         run: terraform init
         working-directory: terraform #Adjust if we have our terraform .terraform file in a different directory

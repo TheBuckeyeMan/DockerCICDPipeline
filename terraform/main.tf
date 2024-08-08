@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "adams-test-bucket" {
 }
 #Enables s3 bucket versioning so we can overrite the s3 bucket and not fail terraform apply 
 resource "aws_s3_bucket_versioning" "adams-test-bucket-versioning" {
-  bucket = aws_s3_bucket.adams-test-bucket.id
+  bucket = aws_s3_bucket.adams-test-bucket.bucket
 
   versioning_configuration {
     status = "Enabled"
