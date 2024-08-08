@@ -13,6 +13,9 @@ resource "aws_s3_bucket_versioning" "adams-test-bucket-versioning" {
   versioning_configuration {
     status = "Enabled"
   }
+  lifecycle {
+    ignore_changes = [versioning_configuration]
+  }
 }
 
 
