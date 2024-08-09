@@ -16,15 +16,15 @@ jobs:
 
     steps:
 #Run a series of tests on the application
-      - name: Jacoco - Generate Test COverage Report
+      - name: Jacoco - Generate Test Coverage Report
         run: |
-          ./mvnw test
-          ./mvnw jacoco:report
+          /mvnw test
+          /mvnw jacoco:report
 
       - name: Run Unit Tests
-        run: ./mvnw test
+        run: /mvnw test
       - name: SonarQube - Run Static Code Analysis
-        run: ./mvnw sonar:sonar
+        run: /mvnw sonar:sonar
         
 
 
