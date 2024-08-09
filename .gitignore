@@ -37,4 +37,6 @@ Thumbs.db
 # coverage/
 
 
+/Users/adammaas/Desktop/GitHub_Repositories/DockerCICDPipeline/target/site/jacoco
+
 
