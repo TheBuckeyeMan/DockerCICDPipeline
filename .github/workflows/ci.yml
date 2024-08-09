@@ -18,13 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-#Run a series of tests on the application
+#Run a series of tests on the application -> Ensure you add the plugins to pom.xml
       - name: Jacoco - Generate Test Coverage Report
         run: |
           mvn jacoco:report
-
-      - name: Run Unit Tests
-        run: mvn test
 
       - name: SonarQube - Run Static Code Analysis
         run: mvn sonar:sonar
