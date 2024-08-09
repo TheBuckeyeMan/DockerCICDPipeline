@@ -1,7 +1,7 @@
 terraform/.terraform/**
 
 #Exclude target directory 
-target/
+# target/
 
 #Exclude IDE Configurations
 .idea/
