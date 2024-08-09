@@ -18,8 +18,8 @@ jobs:
 #Run a series of tests on the application
       - name: Jacoco - Generate Test Coverage Report
         run: |
-          mvn test
-          mvn jacoco:report
+          ./mvn test
+          ./mvn jacoco:report
 
       - name: Run Unit Tests
         run: ./mvnw test
