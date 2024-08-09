@@ -1,3 +1,4 @@
+#Ensure your repository Secrets for DOCKER_USERNAME, DOCKER_PASSWORD, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY are properly configured
 name: CI/CD Pipeline
 
 on:
@@ -33,8 +34,8 @@ jobs:
       - name: Push Docker images
         run: |
           docker push thebuckeyeman20/cicd:image1
-#Teraform code for the deployment - this is what kicks off the deployment of aws resources
-      
+
+#Teraform code for the terraform infrastructure deployment - this is what kicks off the deployment of aws resources
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -51,8 +52,7 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform # Adjust if your Terraform configuration is in a different directory
-#Remove the terraform destroy to use this pipeline in a fully functioning application
-      - name: Terraform Destroy
+      - name: Terraform Destroy #Remove the terraform destroy to use this pipeline in a fully functioning application
         run: terraform destroy -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform # Adjust if your Terraform configuration is in a different directory
 
