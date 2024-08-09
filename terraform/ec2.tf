@@ -33,5 +33,14 @@ resource "aws_security_group" "instance_sg" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key"  # Change to your preferred key name
-  public_key = file("~/.ssh/id_rsa.pub")  # Replace with the path to your public key
+  public_key = file("/Users/adammaas/.ssh/id_rsa.pub")  # Replace with the path to your public key
 }
+//Generate ssh-keygen -t rsa -b 4096 -C "adamjm1220@gmail.com"
+
+
+output "instance_public_ip" {
+  description = "The public IP of the EC2 instance"
+  value       = aws_instance.free_tier_ec2.public_ip
+}
+
+
