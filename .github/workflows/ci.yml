@@ -16,6 +16,8 @@ jobs:
 
     steps:
 #Run a series of tests on the application
+      - name: Set up Maven Wrapper
+        run: chmod +x ./mvnw
       - name: Jacoco - Generate Test Coverage Report
         run: |
           ./mvnw test
