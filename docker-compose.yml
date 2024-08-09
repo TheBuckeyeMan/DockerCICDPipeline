@@ -8,17 +8,3 @@ services:
       - 8082:8082
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-  container2:
-    image: thebuckeyeman20/cicd:deleteafter
-    container_name: container2
-    ports:
-      - 8086:8086
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-  container3:
-    image: thebuckeyeman20/cicd:testdelete
-    container_name: container3
-    ports:
-      - 8088:8088
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev

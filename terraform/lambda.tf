@@ -9,8 +9,8 @@ resource "aws_lambda_function" "adam_lambda_function" {
   # source_code_hash = filebase64sha256("./target/DockerCICDPipeline-0.0.1-SNAPSHOT.jar")
 
   # You can provide an empty deployment package if required
-  filename         = "empty.zip" # or provide a path to an actual deployment package
-  source_code_hash = filebase64sha256("empty.zip")
+  filename         = "/Users/adammaas/Desktop/GitHub_Repositories/DockerCICDPipeline/target/DockerCICDPipeline-0.0.1-SNAPSHOT.jar" # or provide a path to an actual deployment package
+  source_code_hash = filebase64sha256("/Users/adammaas/Desktop/GitHub_Repositories/DockerCICDPipeline/target/DockerCICDPipeline-0.0.1-SNAPSHOT.jar")
 
   # Optionally, you can set up environment variables
 #   environment {
