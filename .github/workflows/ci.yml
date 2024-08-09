@@ -52,9 +52,9 @@ jobs:
         run: terraform apply -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform # Adjust if your Terraform configuration is in a different directory
 #Remove the terraform destroy to use this pipeline in a fully functioning application
-      # - name: Terraform Destroy
-      #   run: terraform destroy -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-      #   working-directory: terraform # Adjust if your Terraform configuration is in a different directory
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        working-directory: terraform # Adjust if your Terraform configuration is in a different directory
 
 # CD Portion of the cicd process - take docker image and push to aws lambda
       - name: Trigger Spinnaker Pipeline
