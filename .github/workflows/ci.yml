@@ -15,30 +15,21 @@ jobs:
     runs-on: ubuntu-latest 
 
     steps:
-#Run a series of tests on the application
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Maven Wrapper
-        run: chmod +x ./mvnw
+#Run a series of tests on the application
       - name: Jacoco - Generate Test Coverage Report
         run: |
-          ./mvnw test
-          ./mvnw jacoco:report
+          mvn jacoco:report
 
       - name: Run Unit Tests
-        run: ./mvnw test
+        run: mvn test
 
       - name: SonarQube - Run Static Code Analysis
-        run: ./mvnw sonar:sonar
-        
+        run: mvn sonar:sonar
 
-
-
-
-      # - name: Checkout code
-      #   uses: actions/checkout@v3
-
+#Build Docker Image        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
