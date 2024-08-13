@@ -48,7 +48,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t thebuckeyeman20/cicd:image1 .
-          docker tag thebuckeyeman20/cicd:image1 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:latest
+          docker tag thebuckeyeman20/cicd:image1 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
 
       # Push Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
@@ -58,6 +58,5 @@ jobs:
       # Push Docker image to AWS ECR
       - name: Push Docker image to AWS ECR
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
 
-          
