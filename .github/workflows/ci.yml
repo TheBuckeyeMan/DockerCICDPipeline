@@ -59,9 +59,6 @@ jobs:
       - name: Push Docker image to AWS ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
-
-      - name: Install jq
-        run: sudo apt-get install -y jq
         
       # Update ECS Task Definition - To allow it to consume the newly deployed image
       - name: Update ECS Task Definition
@@ -71,10 +68,8 @@ jobs:
           NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | .executionRoleArn = "<ARN_OF_THE_ROLE>" | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
           aws ecs register-task-definition --family ecs_task --cli-input-json "$NEW_TASK_DEFINITION"
 
-    
       # Deploy the new container found in AWS ECR to ECS
       - name: Deploy to ECS
         run: |
           aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment
 
-          
