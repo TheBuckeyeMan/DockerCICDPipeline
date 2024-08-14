@@ -59,4 +59,15 @@ jobs:
       - name: Push Docker image to AWS ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
-
+          
+      #Update ECS Task Definition - To alow it to consume the newly deployed image
+      - name: Update ECS Task Definition
+        run: |
+          ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ecs_task)
+          NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "$AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition.containerDefinitions[0].image = $IMAGE')
+          aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION"
+      
+      # Deploy the new container found in aws ECR to ECS
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment           
