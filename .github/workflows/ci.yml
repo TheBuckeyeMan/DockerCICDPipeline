@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-#Run a series of tests on the application -> Ensure you add the plugins to pom.xml
+      # Run a series of tests on the application -> Ensure you add the plugins to pom.xml
       - name: Jacoco - Generate Test Coverage Report
         run: |
           mvn jacoco:report
@@ -33,7 +33,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
- 
+
       - name: Configure AWS credentials
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -59,20 +59,19 @@ jobs:
       - name: Push Docker image to AWS ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
-       
-          
+
       - name: Install jq
         run: sudo apt-get install -y jq
         
-      #Update ECS Task Definition - To alow it to consume the newly deployed image
+      # Update ECS Task Definition - To allow it to consume the newly deployed image
       - name: Update ECS Task Definition
         run: |
           ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ecs_task)
           echo $ECS_TASK_DEFINITION
-          NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "$AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition.containerDefinitions[0].image = $IMAGE')
-          aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION"
+          NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+          aws ecs register-task-definition --family ecs_task --cli-input-json "$NEW_TASK_DEFINITION"
       
-      # Deploy the new container found in aws ECR to ECS
+      # Deploy the new container found in AWS ECR to ECS
       - name: Deploy to ECS
         run: |
-          aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment           
+          aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment
