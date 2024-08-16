@@ -1,8 +1,5 @@
 terraform/.terraform/**
 
-#Exclude target directory 
-# target/
-
 #Exclude IDE Configurations
 .idea/
 *.iml
@@ -15,28 +12,6 @@ terraform/.terraform/**
 .DS_Store
 Thumbs.db
 
-
-
-#Exclude local maven repo
-# ~/.m2/repository/
-
 #Exclude build artifacts
 *.log
 *.tmp
-
-
-#Exclude docker projects
-# *.tar
-# docker-compose.override.yml
-
-#Exclude CICD Artifacts
-# .github/workflows/
-
-#Exclude TEst Results
-# test-results/
-# coverage/
-
-
-/Users/adammaas/Desktop/GitHub_Repositories/DockerCICDPipeline/target/site/jacoco
-
-

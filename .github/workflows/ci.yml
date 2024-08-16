@@ -1,4 +1,5 @@
-#Ensure your repository Secrets for DOCKER_USERNAME, DOCKER_PASSWORD, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY are properly configured
+#Ensure your repository Secrets for DOCKER_USERNAME, DOCKER_PASSWORD, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT_ID are properly configured
+#This pipeline is configured for spring boot applications
 name: CI/CD Pipeline
 
 on:
@@ -9,6 +10,7 @@ on:
       - test
       - feature/dockerimagecreation
       - feature/cd
+      - feature/ecs
 
 jobs:
   build-and-deploy:
@@ -18,12 +20,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-#Run a series of tests on the application -> Ensure you add the plugins to pom.xml
-      - name: Jacoco - Generate Test Coverage Report
+      - name: Jacoco - Generate Test Coverage Report # Run a series of tests on the application -> Ensure you add the plugins to pom.xml -> For Spring Boot Applications
         run: |
           mvn jacoco:report
 
-#Build Docker Image        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -33,46 +33,37 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
+      - name: Configure AWS credentials # Edit regions if you would like to deploy to different regions
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region us-east-2
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com
+
+      - name: Build Docker image # Edit regions if you would like to deploy to different regions
         run: |
           docker build -t thebuckeyeman20/cicd:image1 .
+          docker tag thebuckeyeman20/cicd:image1 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
 
-      - name: Push Docker images
+      - name: Push Docker image to Docker Hub
         run: |
           docker push thebuckeyeman20/cicd:image1
 
-#Teraform code for the terraform infrastructure deployment - this is what kicks off the deployment of aws resources
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.0
+      - name: Push Docker image to AWS ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
+        
+      - name: Update ECS Task Definition # MODIFY ECS for new ECS Cluster - MODIFY Region if different region is requested
+        run: |
+          ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ecs_task)
+          echo $ECS_TASK_DEFINITION
+          NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | .executionRoleArn = "<ARN_OF_THE_ROLE>" | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+          aws ecs register-task-definition --family ecs_task --cli-input-json "$NEW_TASK_DEFINITION"
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: terraform #Adjust if we have our terraform file in a different directory
-
-      - name: Terraform Plan
-        run: terraform plan -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        working-directory: terraform #Adjust if we have our terraform file in a different directory
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        working-directory: terraform # Adjust if your Terraform configuration is in a different directory
-
-      - name: Terraform Destroy #Remove the terraform destroy to use this pipeline in a fully functioning application
-        run: terraform destroy -auto-approve -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        working-directory: terraform # Adjust if your Terraform configuration is in a different directory
-
-# CD Portion of the cicd process - take docker image and push to aws lambda
-      # - name: Trigger Spinnaker Pipeline
-      #   run: |
-      #     curl -X POST https://spinnaker-api-endpoint/trigger-pipeline \
-      #     -H "Content-Type: application/json" \
-      #     -H "Authorization: Bearer ${{ secrets.SPINNAKER_API_TOKEN }}" \
-      #     -d '{"application": "your-app-name", "pipeline": "your-pipeline-name"}'
-      #   env:
-      #     SPINNAKER_API_TOKEN: ${{ secrets.SPINNAKER_API_TOKEN }}
-
-
-          
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment
 
