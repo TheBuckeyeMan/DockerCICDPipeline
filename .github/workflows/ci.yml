@@ -11,6 +11,7 @@ on:
       - feature/dockerimagecreation
       - feature/cd
       - feature/ecs
+      - feature/API_App_ECS_TEMPLATE
 
 jobs:
   build-and-deploy:
@@ -45,25 +46,25 @@ jobs:
 
       - name: Build Docker image # Edit regions if you would like to deploy to different regions
         run: |
-          docker build -t thebuckeyeman20/cicd:image1 .
-          docker tag thebuckeyeman20/cicd:image1 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
+          docker build -t thebuckeyeman20/api:baseapi .
+       #   docker tag thebuckeyeman20/api:baseapi ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push thebuckeyeman20/cicd:image1
+          docker push thebuckeyeman20/api:baseapi
 
-      - name: Push Docker image to AWS ECR
-        run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
+      # - name: Push Docker image to AWS ECR
+      #   run: |
+      #     docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs
         
-      - name: Update ECS Task Definition # MODIFY ECS for new ECS Cluster - MODIFY Region if different region is requested
-        run: |
-          ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ecs_task)
-          echo $ECS_TASK_DEFINITION
-          NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | .executionRoleArn = "<ARN_OF_THE_ROLE>" | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
-          aws ecs register-task-definition --family ecs_task --cli-input-json "$NEW_TASK_DEFINITION"
+      # - name: Update ECS Task Definition # MODIFY ECS for new ECS Cluster - MODIFY Region if different region is requested
+      #   run: |
+      #     ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ecs_task)
+      #     echo $ECS_TASK_DEFINITION
+      #     NEW_TASK_DEFINITION=$(echo $ECS_TASK_DEFINITION | jq --arg IMAGE "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/containers_for_ecs:containerforecs" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | .executionRoleArn = "<ARN_OF_THE_ROLE>" | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+      #     aws ecs register-task-definition --family ecs_task --cli-input-json "$NEW_TASK_DEFINITION"
 
-      - name: Deploy to ECS
-        run: |
-          aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment
+      # - name: Deploy to ECS
+      #   run: |
+      #     aws ecs update-service --cluster ecs_cluster --service ecs_service --force-new-deployment
 

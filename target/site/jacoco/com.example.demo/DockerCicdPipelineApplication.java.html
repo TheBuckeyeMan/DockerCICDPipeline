@@ -2,13 +2,88 @@
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.core.sync.RequestBody;
+import com.example.demo.api.Todo;
 
 @SpringBootApplication
-<span class="fc" id="L7">public class DockerCicdPipelineApplication {</span>
+<span class="fc" id="L17">public class DockerCicdPipelineApplication {</span>
 
+<span class="fc" id="L19">	private static final Logger log = LoggerFactory.getLogger(DockerCicdPipelineApplication.class);</span>
+
+	/*
+	 * This section of code is responsable for:
+	 * 
+	 * 
+	 */
 	public static void main(String[] args) {
-<span class="nc" id="L10">		SpringApplication.run(DockerCicdPipelineApplication.class, args);</span>
-<span class="nc" id="L11">	}</span>
+<span class="nc" id="L27">		SpringApplication.run(DockerCicdPipelineApplication.class, args);</span>
+<span class="nc" id="L28">	}</span>
+
+	/*
+	 * This section of code is responsable for:
+	 * 
+	 * 
+	 */
+	@Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+<span class="fc" id="L37">        return builder.build();</span>
+    }
+
+	/*
+	 * This section of code is responsable for:
+	 * 
+	 * 
+	 */
+	@Bean
+    public CommandLineRunner run(RestTemplate restTemplate, S3Client s3Client) throws Exception {
+<span class="fc" id="L47">        return args -&gt; {</span>
+<span class="fc" id="L48">            Todo todo = restTemplate.getForObject(</span>
+                    &quot;https://jsonplaceholder.typicode.com/todos/1&quot;, Todo.class);
+
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (todo != null) {</span>
+<span class="fc" id="L52">                String bucketName = &quot;api-data-colection-s3-bucket-for-testing&quot;;</span>
+<span class="fc" id="L53">                String fileName = &quot;todo.json&quot;;</span>
+<span class="fc" id="L54">                String fileContent = todo.toString();</span>
+
+<span class="fc" id="L56">                log.info(&quot;Attempting to upload to S3 bucket: &quot; + bucketName);</span>
+<span class="fc" id="L57">                uploadToS3(s3Client, bucketName, fileName, fileContent);</span>
+<span class="fc" id="L58">            } else {</span>
+<span class="nc" id="L59">                log.error(&quot;Received null Todo object from API&quot;);</span>
+            }
+<span class="fc" id="L61">        };</span>
+    }
+	/*
+	 * This section of code is responsable for:
+	 * 
+	 * 
+	 */
+	private void uploadToS3(S3Client s3Client, String bucketName, String fileName, String fileContent) {
+        try {
+<span class="fc" id="L70">            PutObjectRequest putObjectRequest = PutObjectRequest.builder()</span>
+<span class="fc" id="L71">                .bucket(bucketName)</span>
+<span class="fc" id="L72">                .key(fileName)</span>
+<span class="fc" id="L73">                .build();</span>
+
+<span class="fc" id="L75">            s3Client.putObject(putObjectRequest, RequestBody.fromString(fileContent));</span>
+<span class="fc" id="L76">            log.info(&quot;File uploaded to S3 bucket: &quot; + bucketName + &quot;/&quot; + fileName);</span>
+<span class="nc" id="L77">        } catch (Exception e) {</span>
+<span class="nc" id="L78">            log.error(&quot;Error uploading file to S3&quot;, e);</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">    }</span>
+
+
+
+
 
 }
+
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

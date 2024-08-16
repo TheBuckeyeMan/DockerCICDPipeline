@@ -1,2 +1,4 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-DockerCICDPipeline,com.example.demo,DockerCicdPipelineApplication,5,3,0,0,2,1,1,1,1,1
+DockerCICDPipeline,com.example.demo.api,S3Config,0,10,0,0,0,4,0,2,0,2
+DockerCICDPipeline,com.example.demo.api,Todo,7,23,0,0,2,4,0,4,0,4
+DockerCICDPipeline,com.example.demo,DockerCicdPipelineApplication,13,65,1,1,5,21,2,6,1,6
