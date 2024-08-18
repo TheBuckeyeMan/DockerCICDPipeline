@@ -1,3 +1,5 @@
+//This application contains the main entrypoint and configuration for the spring boot application
+
 package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
@@ -16,6 +18,7 @@ import com.example.demo.api.Todo;
 @SpringBootApplication
 public class DockerCicdPipelineApplication {
 
+	//creates a log for us to log the response of the application class json response - response contains our json file contents
 	private static final Logger log = LoggerFactory.getLogger(DockerCicdPipelineApplication.class);
 
 	/*
@@ -33,6 +36,7 @@ public class DockerCicdPipelineApplication {
 	 * 
 	 */
 	@Bean
+	//This creates a rest template bean that is used to make http requests.
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
     }
@@ -43,6 +47,7 @@ public class DockerCicdPipelineApplication {
 	 * 
 	 */
 	@Bean
+	//The commandlinereunner bean is ran after the main method, this is what actually calls the api and fetches the data
     public CommandLineRunner run(RestTemplate restTemplate, S3Client s3Client) throws Exception {
         return args -> {
             Todo todo = restTemplate.getForObject(
@@ -65,6 +70,8 @@ public class DockerCicdPipelineApplication {
 	 * 
 	 * 
 	 */
+	//this creates a request to upload to s3 and uses the s3configuration we made to alow it to interact with it. 
+	//Additionally, this class attemots to upload to s3
 	private void uploadToS3(S3Client s3Client, String bucketName, String fileName, String fileContent) {
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -78,11 +85,6 @@ public class DockerCicdPipelineApplication {
             log.error("Error uploading file to S3", e);
         }
     }
-
-
-
-
-
 }
 
 
