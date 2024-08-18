@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DockerCicdPipelineApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DockerCICDPipeline</a> &gt; <a href="index.source.html" class="el_package">com.example.demo</a> &gt; <span class="el_source">DockerCicdPipelineApplication.java</span></div><h1>DockerCicdPipelineApplication.java</h1><pre class="source lang-java linenums">package com.example.demo;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DockerCicdPipelineApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DockerCICDPipeline</a> &gt; <a href="index.source.html" class="el_package">com.example.demo</a> &gt; <span class="el_source">DockerCicdPipelineApplication.java</span></div><h1>DockerCicdPipelineApplication.java</h1><pre class="source lang-java linenums">//This application contains the main entrypoint and configuration for the spring boot application
+
+package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,75 +16,67 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import com.example.demo.api.Todo;
 
 @SpringBootApplication
-<span class="fc" id="L17">public class DockerCicdPipelineApplication {</span>
+<span class="fc" id="L19">public class DockerCicdPipelineApplication {</span>
 
-<span class="fc" id="L19">	private static final Logger log = LoggerFactory.getLogger(DockerCicdPipelineApplication.class);</span>
+	//creates a log for us to log the response of the application class json response - response contains our json file contents
+<span class="fc" id="L22">	private static final Logger log = LoggerFactory.getLogger(DockerCicdPipelineApplication.class);</span>
 
 	/*
 	 * This section of code is responsable for:
-	 * 
-	 * 
+	 * Running the application
 	 */
 	public static void main(String[] args) {
-<span class="nc" id="L27">		SpringApplication.run(DockerCicdPipelineApplication.class, args);</span>
-<span class="nc" id="L28">	}</span>
+<span class="nc" id="L29">		SpringApplication.run(DockerCicdPipelineApplication.class, args);</span>
+<span class="nc" id="L30">	}</span>
 
 	/*
 	 * This section of code is responsable for:
-	 * 
-	 * 
+	 * This creates a rest template bean that is used to make http requests.
 	 */
 	@Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-<span class="fc" id="L37">        return builder.build();</span>
+<span class="fc" id="L38">        return builder.build();</span>
     }
-
 	/*
 	 * This section of code is responsable for:
-	 * 
-	 * 
+	 * The commandlinereunner bean is ran after the main method, this is what actually calls the api and fetches the data
 	 */
 	@Bean
     public CommandLineRunner run(RestTemplate restTemplate, S3Client s3Client) throws Exception {
-<span class="fc" id="L47">        return args -&gt; {</span>
-<span class="fc" id="L48">            Todo todo = restTemplate.getForObject(</span>
+<span class="fc" id="L46">        return args -&gt; {</span>
+<span class="fc" id="L47">            Todo todo = restTemplate.getForObject(</span>
                     &quot;https://jsonplaceholder.typicode.com/todos/1&quot;, Todo.class);
 
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (todo != null) {</span>
-<span class="fc" id="L52">                String bucketName = &quot;api-data-colection-s3-bucket-for-testing&quot;;</span>
-<span class="fc" id="L53">                String fileName = &quot;todo.json&quot;;</span>
-<span class="fc" id="L54">                String fileContent = todo.toString();</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            if (todo != null) {</span>
+<span class="fc" id="L51">                String bucketName = &quot;api-data-colection-s3-bucket-for-testing&quot;;</span>
+<span class="fc" id="L52">                String fileName = &quot;TemplateFile.json&quot;; //Update the name of the file you want to store in s3</span>
+<span class="fc" id="L53">                String fileContent = todo.toString();</span>
 
-<span class="fc" id="L56">                log.info(&quot;Attempting to upload to S3 bucket: &quot; + bucketName);</span>
-<span class="fc" id="L57">                uploadToS3(s3Client, bucketName, fileName, fileContent);</span>
-<span class="fc" id="L58">            } else {</span>
-<span class="nc" id="L59">                log.error(&quot;Received null Todo object from API&quot;);</span>
+<span class="fc" id="L55">                log.info(&quot;Attempting to upload to S3 bucket: &quot; + bucketName);</span>
+<span class="fc" id="L56">                uploadToS3(s3Client, bucketName, fileName, fileContent);</span>
+<span class="fc" id="L57">            } else {</span>
+<span class="nc" id="L58">                log.error(&quot;Received null Todo object from API&quot;);</span>
             }
-<span class="fc" id="L61">        };</span>
+<span class="fc" id="L60">        };</span>
     }
 	/*
 	 * This section of code is responsable for:
-	 * 
-	 * 
+	 * this creates a request to upload to s3 and uses the s3configuration we made to alow it to interact with it. 
+	 * Additionally, this class attemots to upload to s3
 	 */
 	private void uploadToS3(S3Client s3Client, String bucketName, String fileName, String fileContent) {
         try {
-<span class="fc" id="L70">            PutObjectRequest putObjectRequest = PutObjectRequest.builder()</span>
-<span class="fc" id="L71">                .bucket(bucketName)</span>
-<span class="fc" id="L72">                .key(fileName)</span>
-<span class="fc" id="L73">                .build();</span>
+<span class="fc" id="L69">            PutObjectRequest putObjectRequest = PutObjectRequest.builder()</span>
+<span class="fc" id="L70">                .bucket(bucketName)</span>
+<span class="fc" id="L71">                .key(fileName)</span>
+<span class="fc" id="L72">                .build();</span>
 
-<span class="fc" id="L75">            s3Client.putObject(putObjectRequest, RequestBody.fromString(fileContent));</span>
-<span class="fc" id="L76">            log.info(&quot;File uploaded to S3 bucket: &quot; + bucketName + &quot;/&quot; + fileName);</span>
-<span class="nc" id="L77">        } catch (Exception e) {</span>
-<span class="nc" id="L78">            log.error(&quot;Error uploading file to S3&quot;, e);</span>
-<span class="fc" id="L79">        }</span>
-<span class="fc" id="L80">    }</span>
-
-
-
-
-
+<span class="fc" id="L74">            s3Client.putObject(putObjectRequest, RequestBody.fromString(fileContent));</span>
+<span class="fc" id="L75">            log.info(&quot;File uploaded to S3 bucket: &quot; + bucketName + &quot;/&quot; + fileName);</span>
+<span class="nc" id="L76">        } catch (Exception e) {</span>
+<span class="nc" id="L77">            log.error(&quot;Error uploading file to S3&quot;, e);</span>
+<span class="fc" id="L78">        }</span>
+<span class="fc" id="L79">    }</span>
 }
 
 

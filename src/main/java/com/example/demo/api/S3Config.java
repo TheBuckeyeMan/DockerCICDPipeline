@@ -2,6 +2,11 @@
 //So this portion will create a configuration to interact with the s3 bucket, without it, our application wouldnt beable to talk to our s3 bucket
 //@Configuration defines this is a configuration class and it can define beans for spring context - aka, - the code here is for configuration,not nessasarily to do anything in particular
 //@Bean indicates that this is a brean provider meaning it will return an instance of S3 Client that can be used elsewhere in the applicaiton. 
+
+
+//----------------------------------------------------------------------------
+//THIS CLASS SHOULD NOT CHANGE UNLESS WE ARE CHANGING THE REGION OF THE S3 BUCKET
+//----------------------------------------------------------------------------
 package com.example.demo.api;
 
 import org.springframework.context.annotation.Bean;

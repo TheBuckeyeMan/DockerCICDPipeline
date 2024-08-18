@@ -1,23 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>S3Config.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DockerCICDPipeline</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.api</a> &gt; <span class="el_source">S3Config.java</span></div><h1>S3Config.java</h1><pre class="source lang-java linenums">package com.example.demo.api;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>S3Config.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DockerCICDPipeline</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.api</a> &gt; <span class="el_source">S3Config.java</span></div><h1>S3Config.java</h1><pre class="source lang-java linenums">//This file is for providing an s3 client as well as the application
+//So this portion will create a configuration to interact with the s3 bucket, without it, our application wouldnt beable to talk to our s3 bucket
+//@Configuration defines this is a configuration class and it can define beans for spring context - aka, - the code here is for configuration,not nessasarily to do anything in particular
+//@Bean indicates that this is a brean provider meaning it will return an instance of S3 Client that can be used elsewhere in the applicaiton. 
+
+
+//----------------------------------------------------------------------------
+//THIS CLASS SHOULD NOT CHANGE UNLESS WE ARE CHANGING THE REGION OF THE S3 BUCKET
+//----------------------------------------------------------------------------
+package com.example.demo.api;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+//From the import below, we can see that instead of manually creating the configuration for the s3 client, we can simply import it and build an instance of it which happens below
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.regions.Region;
 
 @Configuration
-<span class="fc" id="L9">public class S3Config {</span>
+<span class="fc" id="L19">public class S3Config {</span>
 
     /*
 	 * This section of code is responsable for:
-	 * 
-	 * 
+	 * Creating the s3 client configuration -&gt; Alows for us to interact with the s3 bucket -&gt; @Bean alows for it to be picked up
+	 * Region.&lt;your reion&gt; specifies the region of the EXISTING BUCKET
 	 */
     @Bean
     public S3Client s3Client() {
-<span class="fc" id="L18">        return S3Client.builder()</span>
-<span class="fc" id="L19">                       .region(Region.US_EAST_2) // Replace with your region</span>
-<span class="fc" id="L20">                       .build();</span>
+<span class="fc" id="L28">        return S3Client.builder()</span>
+<span class="fc" id="L29">                       .region(Region.US_EAST_2) // Replace with your region</span>
+                       //the below is building the s3 client. our class S3Client inherits the method of s3Client from the package. the below runs the build so the configuration is valid
+<span class="fc" id="L31">                       .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

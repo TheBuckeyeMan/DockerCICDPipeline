@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //This tells jackson to ignore any properyies that are not mapped explicitly in the specified section
 @JsonIgnoreProperties(ignoreUnknown = true)
 //Update data points below for new api consumption
+//UPDATE THE VALUES BELOW FOR API RESPONSE
 public record Todo(Long id, String title) {
 
     /*
